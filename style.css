@@ -1,0 +1,553 @@
+/* ==========================================================================
+   BUNGA
+   ========================================================================== */
+
+:root {
+  --bg-dark: #080c1a;
+  --bg-gradient: radial-gradient(circle at 50% 40%, #152244 0%, #0a1024 60%, #040714 100%);
+  --accent-pink: #f48fb1;
+  --accent-rose: #e91e63;
+  --accent-gold: #ffd54f;
+  --card-bg: #fff6f8;
+  --card-border: #f8bbd0;
+  --text-dark: #37474f;
+  --text-pink: #c2185b;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-hand: 'Caveat', 'Dancing Script', cursive;
+  --font-script: 'Sacramento', cursive;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  font-family: var(--font-sans);
+  background: var(--bg-dark);
+  background-image: var(--bg-gradient);
+  color: #ffffff;
+}
+
+/* Background Canvas for Falling Petals & Glow Particles */
+#bgCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Top Navigation Bar */
+.top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 16px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  background: rgba(8, 12, 26, 0.4);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+}
+
+.logo-icon {
+  color: var(--accent-pink);
+  font-size: 1.3rem;
+  animation: pulseHeart 2s infinite ease-in-out;
+}
+
+@keyframes pulseHeart {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); color: var(--accent-rose); }
+}
+
+.nav-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.nav-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  padding: 10px 18px;
+  border-radius: 30px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-btn:hover {
+  background: rgba(244, 143, 177, 0.25);
+  border-color: var(--accent-pink);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(244, 143, 177, 0.3);
+}
+
+.nav-btn.highlight {
+  background: linear-gradient(135deg, #ec407a, #d81b60);
+  border: none;
+  box-shadow: 0 4px 15px rgba(236, 64, 122, 0.4);
+}
+
+.nav-btn.highlight:hover {
+  background: linear-gradient(135deg, #f48fb1, #ec407a);
+  transform: translateY(-2px) scale(1.03);
+}
+
+/* Main Showcase Layout */
+.main-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 20px 40px;
+  position: relative;
+  z-index: 10;
+}
+
+/* Bouquet Wrapper with Ambient Glow */
+.bouquet-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 680px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1000px;
+}
+
+.ambient-glow {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(248, 187, 208, 0.18) 0%, rgba(233, 30, 99, 0.08) 40%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(40px);
+  animation: glowFloat 6s ease-in-out infinite alternate;
+}
+
+@keyframes glowFloat {
+  0% { transform: scale(0.9) translateY(0); opacity: 0.6; }
+  100% { transform: scale(1.1) translateY(-15px); opacity: 0.9; }
+}
+
+.bouquet-graphic {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  transform-style: preserve-3d;
+  transition: transform 0.2s ease-out;
+  animation: swayBouquet 8s ease-in-out infinite alternate;
+}
+
+@keyframes swayBouquet {
+  0% { transform: rotate(-1deg) translateY(0); }
+  100% { transform: rotate(1deg) translateY(-8px); }
+}
+
+.bouquet-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 20px 35px rgba(2, 6, 18, 0.7));
+}
+
+/* Interactive Greeting Card attached to Ribbon */
+.greeting-card-container {
+  position: absolute;
+  right: 18%;
+  bottom: 24%;
+  z-index: 50;
+  transform: rotate(-6deg);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.greeting-card-container:hover {
+  transform: rotate(0deg) scale(1.06) translateY(-6px);
+  z-index: 60;
+}
+
+.card-string {
+  position: absolute;
+  top: -24px;
+  left: 20px;
+  width: 2px;
+  height: 25px;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.greeting-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 18px 24px;
+  min-width: 210px;
+  max-width: 260px;
+  box-shadow: 0 12px 30px rgba(4, 9, 24, 0.5), inset 0 0 15px rgba(248, 187, 208, 0.3);
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Bracket Corner Styling matching user image */
+.corner {
+  position: absolute;
+  font-family: monospace;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--text-pink);
+  line-height: 1;
+  opacity: 0.8;
+}
+
+.corner.top-left { top: 6px; left: 8px; }
+.corner.top-right { top: 6px; right: 8px; }
+.corner.bottom-left { bottom: 6px; left: 8px; }
+.corner.bottom-right { bottom: 6px; right: 8px; }
+
+/* Card Content Typography */
+.card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.card-header {
+  font-family: var(--font-hand);
+  font-size: 1.35rem;
+  color: var(--text-pink);
+  align-self: flex-start;
+  font-weight: 600;
+}
+
+.card-body {
+  font-family: var(--font-hand);
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #263238;
+  margin: 4px 0;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.card-footer {
+  font-family: var(--font-hand);
+  font-size: 1.2rem;
+  color: var(--text-pink);
+  align-self: flex-end;
+  font-weight: 600;
+}
+
+.card-hint {
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.65);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 3px 10px;
+  border-radius: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.greeting-card-container:hover .card-hint {
+  opacity: 1;
+}
+
+/* Modals Overlay & Card Styling */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(4, 8, 20, 0.75);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  padding: 20px;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: #11182c;
+  border: 1px solid rgba(248, 187, 208, 0.3);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 480px;
+  padding: 28px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  transform: scale(0.9) translateY(20px);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+}
+
+.modal-overlay.active .modal-card {
+  transform: scale(1) translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.modal-header h3 {
+  font-size: 1.3rem;
+  color: var(--accent-pink);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.8rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #ffffff;
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 8px;
+}
+
+.form-group input, .form-group textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.form-group input:focus, .form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent-pink);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 12px rgba(244, 143, 177, 0.2);
+}
+
+.preset-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.chip-btn {
+  background: rgba(244, 143, 177, 0.12);
+  border: 1px solid rgba(244, 143, 177, 0.3);
+  color: var(--accent-pink);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chip-btn:hover {
+  background: var(--accent-pink);
+  color: #000;
+}
+
+.modal-footer {
+  margin-top: 24px;
+}
+
+.btn-primary {
+  width: 100%;
+  background: linear-gradient(135deg, #ec407a, #d81b60);
+  border: none;
+  color: #ffffff;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s;
+  box-shadow: 0 4px 20px rgba(236, 64, 122, 0.4);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #f48fb1, #ec407a);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: rgba(244, 143, 177, 0.25);
+  border-color: var(--accent-pink);
+}
+
+/* Special Romantic Letter Modal Styling */
+.modal-card.letter-style {
+  background: #FFF9FA;
+  color: #263238;
+  border: 2px solid #F8BBD0;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+  max-width: 520px;
+  padding: 36px 32px;
+}
+
+.modal-card.letter-style .close-btn {
+  color: #78909C;
+  position: absolute;
+  top: 16px;
+  right: 20px;
+}
+
+.envelope-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.envelope-icon {
+  font-size: 2.5rem;
+  color: var(--accent-rose);
+  margin-bottom: 8px;
+}
+
+.envelope-header h2 {
+  font-family: var(--font-hand);
+  font-size: 1.8rem;
+  color: var(--text-pink);
+}
+
+.letter-body {
+  background: #FFFFFF;
+  border: 1px dashed #F48FB1;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.letter-to {
+  font-family: var(--font-hand);
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: var(--text-pink);
+}
+
+.letter-main {
+  font-family: var(--font-hand);
+  font-size: 1.6rem;
+  line-height: 1.5;
+  color: #37474F;
+  min-height: 80px;
+}
+
+.letter-from {
+  font-family: var(--font-hand);
+  font-size: 1.3rem;
+  color: var(--text-pink);
+  text-align: right;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .top-nav {
+    padding: 12px 16px;
+  }
+  .btn-text {
+    display: none;
+  }
+  .nav-btn {
+    padding: 8px 12px;
+  }
+  .greeting-card-container {
+    right: 10%;
+    bottom: 22%;
+  }
+  .greeting-card {
+    min-width: 170px;
+    padding: 14px 18px;
+  }
+  .card-header { font-size: 1.1rem; }
+  .card-body { font-size: 1.7rem; }
+  .card-footer { font-size: 1rem; }
+}
